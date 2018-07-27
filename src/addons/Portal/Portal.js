@@ -3,12 +3,9 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { cloneElement } from 'react'
 
-import {
-  AutoControlledComponent as Component,
-  doesNodeContainClick,
-  eventStack,
-  makeDebugger,
-} from '../../lib'
+import { AutoControlledComponent as Component, doesNodeContainClick, makeDebugger } from '../../lib'
+
+import EventStack from '../../lib/eventStack/EventStack'
 import Ref from '../Ref'
 import PortalInner from './PortalInner'
 
@@ -128,6 +125,8 @@ class Portal extends Component {
   static autoControlledProps = ['open']
 
   static Inner = PortalInner
+
+  eventStack = new EventStack()
 
   componentWillUnmount() {
     // Clean up timers
@@ -307,10 +306,10 @@ class Portal extends Component {
 
     this.portalNode = target
 
-    eventStack.sub('mouseleave', this.handlePortalMouseLeave, { pool: eventPool, target })
-    eventStack.sub('mouseenter', this.handlePortalMouseEnter, { pool: eventPool, target })
-    eventStack.sub('click', this.handleDocumentClick, { pool: eventPool })
-    eventStack.sub('keydown', this.handleEscape, { pool: eventPool })
+    this.eventStack.sub('mouseleave', this.handlePortalMouseLeave, { pool: eventPool, target })
+    this.eventStack.sub('mouseenter', this.handlePortalMouseEnter, { pool: eventPool, target })
+    this.eventStack.sub('click', this.handleDocumentClick, { pool: eventPool })
+    this.eventStack.sub('keydown', this.handleEscape, { pool: eventPool })
 
     _.invoke(this.props, 'onMount', null, this.props)
   }
@@ -321,10 +320,10 @@ class Portal extends Component {
 
     this.portalNode = null
 
-    eventStack.unsub('mouseleave', this.handlePortalMouseLeave, { pool: eventPool, target })
-    eventStack.unsub('mouseenter', this.handlePortalMouseEnter, { pool: eventPool, target })
-    eventStack.unsub('click', this.handleDocumentClick, { pool: eventPool })
-    eventStack.unsub('keydown', this.handleEscape, { pool: eventPool })
+    this.eventStack.unsub('mouseleave', this.handlePortalMouseLeave, { pool: eventPool, target })
+    this.eventStack.unsub('mouseenter', this.handlePortalMouseEnter, { pool: eventPool, target })
+    this.eventStack.unsub('click', this.handleDocumentClick, { pool: eventPool })
+    this.eventStack.unsub('keydown', this.handleEscape, { pool: eventPool })
 
     _.invoke(this.props, 'onUnmount', null, this.props)
   }
