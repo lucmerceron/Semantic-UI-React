@@ -4,9 +4,9 @@ import PropTypes from 'prop-types'
 import React, { cloneElement } from 'react'
 
 import {
+  eventStack,
   AutoControlledComponent as Component,
   doesNodeContainClick,
-  eventStack,
   makeDebugger,
 } from '../../lib'
 import Ref from '../Ref'
