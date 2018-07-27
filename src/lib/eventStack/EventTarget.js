@@ -19,8 +19,8 @@ export default class EventTarget {
    * @param {String} eventType
    * @param {Function[]} eventHandlers
    */
-  addHandlers(poolName, eventType, eventHandlers) {
-    this.removeTargetHandler(eventType)
+  addHandlers(poolName, eventType, eventHandlers, useCapture = false) {
+    this.removeTargetHandler(eventType, useCapture)
 
     if (!this.pools.has(poolName)) {
       this.pools.set(poolName, EventPool.createByType(poolName, eventType, eventHandlers))
@@ -28,7 +28,7 @@ export default class EventTarget {
       this.pools.set(poolName, this.pools.get(poolName).addHandlers(eventType, eventHandlers))
     }
 
-    this.addTargetHandler(eventType)
+    this.addTargetHandler(eventType, useCapture)
   }
 
   /**
@@ -43,7 +43,7 @@ export default class EventTarget {
    * @param {String} eventType
    * @param {Function[]} eventHandlers
    */
-  removeHandlers(poolName, eventType, eventHandlers) {
+  removeHandlers(poolName, eventType, eventHandlers, useCapture = false) {
     const pool = this.pools.get(poolName)
 
     if (pool) {
@@ -55,9 +55,9 @@ export default class EventTarget {
         this.pools.delete(poolName)
       }
 
-      this.removeTargetHandler(eventType)
+      this.removeTargetHandler(eventType, useCapture)
 
-      if (this.pools.size > 0) this.addTargetHandler(eventType)
+      if (this.pools.size > 0) this.addTargetHandler(eventType, useCapture)
     }
   }
 
@@ -77,20 +77,20 @@ export default class EventTarget {
    * @private
    * @param {String} eventType
    */
-  addTargetHandler(eventType) {
+  addTargetHandler(eventType, useCapture) {
     const handler = this.createEmitter(eventType, this.pools)
 
     this.handlers.set(eventType, handler)
-    this.target.addEventListener(eventType, handler)
+    this.target.addEventListener(eventType, handler, useCapture)
   }
 
   /**
    * @private
    * @param {String} eventType
    */
-  removeTargetHandler(eventType) {
+  removeTargetHandler(eventType, useCapture) {
     if (this.handlers.has(eventType)) {
-      this.target.removeEventListener(eventType, this.handlers.get(eventType))
+      this.target.removeEventListener(eventType, this.handlers.get(eventType), useCapture)
       this.handlers.delete(eventType)
     }
   }

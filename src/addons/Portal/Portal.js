@@ -309,7 +309,7 @@ class Portal extends Component {
 
     eventStack.sub('mouseleave', this.handlePortalMouseLeave, { pool: eventPool, target })
     eventStack.sub('mouseenter', this.handlePortalMouseEnter, { pool: eventPool, target })
-    eventStack.sub('click', this.handleDocumentClick, { pool: eventPool })
+    eventStack.sub('click', this.handleDocumentClick, { pool: eventPool, useCapture: true })
     eventStack.sub('keydown', this.handleEscape, { pool: eventPool })
 
     _.invoke(this.props, 'onMount', null, this.props)
@@ -323,7 +323,7 @@ class Portal extends Component {
 
     eventStack.unsub('mouseleave', this.handlePortalMouseLeave, { pool: eventPool, target })
     eventStack.unsub('mouseenter', this.handlePortalMouseEnter, { pool: eventPool, target })
-    eventStack.unsub('click', this.handleDocumentClick, { pool: eventPool })
+    eventStack.unsub('click', this.handleDocumentClick, { pool: eventPool, useCapture: true })
     eventStack.unsub('keydown', this.handleEscape, { pool: eventPool })
 
     _.invoke(this.props, 'onUnmount', null, this.props)

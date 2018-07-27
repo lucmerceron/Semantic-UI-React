@@ -17,10 +17,10 @@ export default class EventStack {
   sub(eventName, eventHandlers, options = {}) {
     if (!isBrowser()) return
 
-    const { target = document, pool = 'default' } = options
+    const { target = document, pool = 'default', useCapture = false } = options
     const eventTarget = this.getTarget(target)
 
-    eventTarget.addHandlers(pool, eventName, normalizeHandlers(eventHandlers))
+    eventTarget.addHandlers(pool, eventName, normalizeHandlers(eventHandlers), useCapture)
   }
 
   /**
@@ -33,11 +33,11 @@ export default class EventStack {
   unsub(eventName, eventHandlers, options = {}) {
     if (!isBrowser()) return
 
-    const { target = document, pool = 'default' } = options
+    const { target = document, pool = 'default', useCapture = false } = options
     const eventTarget = this.getTarget(target, false)
 
     if (eventTarget) {
-      eventTarget.removeHandlers(pool, eventName, normalizeHandlers(eventHandlers))
+      eventTarget.removeHandlers(pool, eventName, normalizeHandlers(eventHandlers), useCapture)
       if (!eventTarget.hasHandlers()) this.removeTarget(target)
     }
   }
